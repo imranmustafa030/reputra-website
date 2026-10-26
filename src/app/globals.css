@@ -1,0 +1,208 @@
+@import "tailwindcss";
+
+/* Brand tokens (see website/DESIGN.md) */
+:root {
+  --ink: #0b2545;
+  --paper: #ffffff;
+  --paper-step: #f3f4f4;
+  --paper-step-2: #e6e8e9;
+  --surface: #ffffff;
+  --gold: #f5b301;
+  --gold-text: #b45309;
+  --growth: #0e7c5a;
+  --growth-bright: #2bb673;
+  --muted: #5a6b80;
+  --border: #e7e2d7;
+  --opened: #dce3ec;
+  --feedback: #fde7c7;
+  --dummy: #e6007e;
+}
+
+@theme inline {
+  --color-ink: var(--ink);
+  --color-paper: var(--paper);
+  --color-paper-step: var(--paper-step);
+  --color-paper-step-2: var(--paper-step-2);
+  --color-surface: var(--surface);
+  --color-gold: var(--gold);
+  --color-gold-text: var(--gold-text);
+  --color-growth: var(--growth);
+  --color-growth-bright: var(--growth-bright);
+  --color-muted: var(--muted);
+  --color-line: var(--border);
+  --color-opened: var(--opened);
+  --color-feedback: var(--feedback);
+  --font-sans: var(--font-jakarta), ui-sans-serif, system-ui, sans-serif;
+  --font-urdu: var(--font-nastaliq), serif;
+  --ease-out-strong: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-padding-top: 96px;
+}
+
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+::selection {
+  background: var(--gold);
+  color: var(--ink);
+}
+
+:focus-visible {
+  outline: 3px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 6px;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.urdu {
+  font-family: var(--font-urdu);
+  line-height: 2;
+}
+
+/* Range inputs used as the product's sliders */
+.range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 28px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.range::-webkit-slider-runnable-track {
+  height: 6px;
+  border-radius: 3px;
+  background: linear-gradient(to right, var(--ink) var(--fill, 30%), var(--paper-step-2) var(--fill, 30%));
+}
+.range::-moz-range-track {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--paper-step-2);
+}
+.range::-moz-range-progress {
+  height: 6px;
+  border-radius: 3px;
+  background: var(--ink);
+}
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 22px;
+  height: 22px;
+  margin-top: -8px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid var(--surface);
+  box-shadow: 0 0 0 1px var(--border);
+  transition: transform 150ms var(--ease-out-strong);
+}
+.range::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--gold);
+  border: 3px solid var(--surface);
+}
+.range:active::-webkit-slider-thumb {
+  transform: scale(1.15);
+}
+
+/* Square-thumb stage slider (How it works) */
+.stage-range {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  cursor: pointer;
+}
+.stage-range::-webkit-slider-runnable-track {
+  height: 8px;
+  background: linear-gradient(to right, var(--ink) var(--fill, 33%), var(--border) var(--fill, 33%));
+}
+.stage-range::-moz-range-track {
+  height: 8px;
+  background: var(--border);
+}
+.stage-range::-moz-range-progress {
+  height: 8px;
+  background: var(--ink);
+}
+.stage-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 32px;
+  height: 32px;
+  margin-top: -12px;
+  background: var(--gold);
+  border: 0;
+  border-radius: 0;
+}
+.stage-range::-moz-range-thumb {
+  width: 32px;
+  height: 32px;
+  background: var(--gold);
+  border: 0;
+  border-radius: 0;
+}
+
+/* Hero entrance: pure CSS, so it runs before hydration and never hides content */
+@keyframes rise-in {
+  from { transform: translateY(105%); }
+  to { transform: translateY(0); }
+}
+@keyframes fade-up {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+@keyframes stage-in {
+  from { opacity: 0; transform: scale(0.97); }
+  to { opacity: 1; transform: scale(1); }
+}
+.anim-rise { animation: rise-in 900ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0ms) both; }
+.anim-fade { animation: fade-up 700ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0ms) both; }
+.anim-stage { animation: stage-in 1000ms cubic-bezier(0.16, 1, 0.3, 1) var(--delay, 0ms) both; }
+@media (prefers-reduced-motion: reduce) {
+  .anim-rise, .anim-fade, .anim-stage { animation: none; }
+}
+
+/* ⚑ Dummy-content preview: add ?dummy to the URL */
+html.show-dummy [data-dummy] {
+  outline: 2px dashed var(--dummy);
+  outline-offset: 3px;
+  position: relative;
+}
+html.show-dummy [data-dummy]::after {
+  content: "⚑ " attr(data-dummy);
+  position: absolute;
+  top: -12px;
+  left: -4px;
+  z-index: 60;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: var(--dummy);
+  color: #fff;
+  font: 700 11px/1.4 var(--font-sans);
+  white-space: nowrap;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

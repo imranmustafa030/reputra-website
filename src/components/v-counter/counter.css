@@ -1,0 +1,312 @@
+/* "The reception counter, filmed": white studio, one warm-grey counter plane, navy product, gold star. */
+
+.vc-root {
+  --vc-ground: #ffffff;
+  --vc-plane: #f4f4f2;
+  --vc-plane-deep: #e6e6e3;
+  --vc-ink: #0b2545;
+  --vc-ink-2: #3e5068;
+  --vc-gold: #f5b301;
+  --vc-radius: 28px;
+  --vc-ease: cubic-bezier(0.22, 1, 0.36, 1);
+  background: var(--vc-ground);
+  color: var(--vc-ink);
+  font-feature-settings: "kern", "calt";
+  interpolate-size: allow-keywords;
+  overflow-x: clip;
+}
+
+.vc-root ::selection {
+  background: var(--vc-ink);
+  color: #ffffff;
+}
+
+.vc-root :focus-visible {
+  outline: 2px solid var(--vc-ink);
+  outline-offset: 4px;
+  border-radius: 999px;
+}
+
+.vc-root a {
+  text-underline-offset: 0.22em;
+  text-decoration-thickness: 1.5px;
+}
+
+/* ---------- The film scene: the counter plane, one field ----------
+   --s (0..1) is the dock: 0 = product centred and large, 1 = docked left with the captions in.
+   It is written by the film's onProgress over the first 14% of the pinned run. */
+
+.vc-scene {
+  --s: 0;
+  --W: min(calc(100vw - 40px), 360px);
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  min-height: 100svh;
+  padding: 44px 0 24px;
+}
+/* as the product docks, the whole group settles towards the middle of the screen */
+.vc-scene-grid {
+  position: relative;
+  transform: translate3d(0, calc(var(--s) * max(0px, (100svh - 660px) / 2)), 0);
+}
+.vc-film-col {
+  position: relative;
+  height: calc(var(--W) * 1.2);
+}
+.vc-film {
+  width: var(--W);
+  transform-origin: 0 0;
+  transform: translate3d(calc((1 - var(--s)) * (100vw - 40px - var(--W)) / 2), 0, 0) scale(calc(1 - 0.3 * var(--s)));
+  will-change: transform;
+}
+.vc-steps {
+  position: absolute;
+  top: calc(var(--W) * 0.22);
+  left: calc(var(--W) * 0.7 + 14px);
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  font-size: 14px;
+  line-height: 1.3;
+  font-weight: 500;
+  opacity: var(--s);
+  transform: translate3d(calc((1 - var(--s)) * 48px), 0, 0);
+}
+.vc-step {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  color: #4f6076;
+  transition: color 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.vc-step-dot {
+  flex: none;
+  width: 8px;
+  height: 8px;
+  margin-top: 0.36em;
+  border-radius: 999px;
+  background: #a9b3c0;
+  transition: background-color 0.45s cubic-bezier(0.32, 0.72, 0, 1), transform 0.45s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.vc-step[data-active="true"] {
+  color: var(--vc-ink);
+}
+.vc-step[data-active="true"] .vc-step-dot {
+  background: var(--vc-ink);
+  transform: scale(1.3);
+}
+.vc-captions {
+  position: relative;
+  margin-top: calc(var(--W) * -0.36 + 48px);
+  opacity: var(--s);
+  transform: translate3d(calc((1 - var(--s)) * 48px), 0, 0);
+}
+
+/* captions stack in one cell; the outgoing line leaves as the incoming one arrives */
+.vc-stack {
+  display: grid;
+}
+.vc-stack > * {
+  grid-area: 1 / 1;
+  opacity: 0;
+  transform: translate3d(0, 10px, 0);
+  transition: opacity 0.32s linear, transform 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+}
+.vc-stack > [data-on="true"] {
+  opacity: 1;
+  transform: none;
+  transition: opacity 0.45s linear 0.12s, transform 0.7s cubic-bezier(0.32, 0.72, 0, 1) 0.12s;
+}
+
+.vc-static {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+@media (min-width: 1024px) {
+  .vc-scene {
+    --film-h: min(calc(100svh - 150px), 720px);
+    height: 100svh;
+    min-height: 0;
+    align-items: center;
+    padding: 0;
+  }
+  .vc-scene-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    column-gap: 32px;
+    align-items: center;
+    transform: none;
+  }
+  .vc-film-col {
+    grid-column: 1 / span 7;
+    height: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transform: translate3d(calc((1 - var(--s)) * var(--dx, 0px)), 0, 0);
+    will-change: transform;
+  }
+  .vc-film {
+    width: calc(var(--film-h) * 5 / 6);
+    transform: none;
+    will-change: auto;
+  }
+  .vc-steps {
+    position: static;
+    flex-direction: row;
+    justify-content: center;
+    gap: 8px 32px;
+    margin-top: 12px;
+    font-size: 15px;
+    opacity: 1;
+    transform: none;
+  }
+  .vc-step {
+    align-items: center;
+  }
+  .vc-step-dot {
+    margin-top: 0;
+  }
+  .vc-captions {
+    grid-column: 8 / span 5;
+    margin-top: 0;
+    padding-bottom: 40px;
+    transform: translate3d(calc((1 - var(--s)) * 64px), 0, 0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-scene {
+    --s: 1 !important;
+    height: auto;
+    min-height: 0;
+    padding: 48px 0 64px;
+  }
+  .vc-film-col {
+    transform: none;
+  }
+}
+
+/* ---------- Estimate sliders ---------- */
+
+.vc-range {
+  -webkit-appearance: none;
+  appearance: none;
+  display: block;
+  width: 100%;
+  height: 44px;
+  background: transparent;
+  cursor: pointer;
+  touch-action: pan-y;
+}
+.vc-range::-webkit-slider-runnable-track {
+  height: 6px;
+  background: transparent;
+}
+.vc-range::-moz-range-track {
+  height: 6px;
+  background: transparent;
+}
+.vc-range::-moz-range-progress {
+  height: 6px;
+  background: transparent;
+}
+.vc-range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  width: 28px;
+  height: 28px;
+  margin-top: -11px;
+  border-radius: 50%;
+  background: var(--vc-ink);
+  border: 5px solid #ffffff;
+  transition: transform 0.25s var(--vc-ease);
+}
+.vc-range::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background: var(--vc-ink);
+  border: 5px solid #ffffff;
+}
+.vc-range:hover::-webkit-slider-thumb {
+  transform: scale(1.08);
+}
+.vc-range:active::-webkit-slider-thumb {
+  transform: scale(1.16);
+}
+.vc-range:focus-visible {
+  outline-offset: 2px;
+  border-radius: 12px;
+}
+
+/* ---------- FAQ accordion ---------- */
+
+.vc-faq::details-content {
+  block-size: 0;
+  overflow: clip;
+  transition: block-size 0.5s var(--vc-ease), content-visibility 0.5s allow-discrete;
+}
+.vc-faq[open]::details-content {
+  block-size: auto;
+}
+.vc-faq summary {
+  list-style: none;
+  cursor: pointer;
+}
+.vc-faq summary::-webkit-details-marker {
+  display: none;
+}
+.vc-faq summary:focus-visible {
+  border-radius: 20px;
+  outline-offset: -2px;
+}
+.vc-faq-icon {
+  transition: transform 0.45s var(--vc-ease);
+}
+.vc-faq[open] .vc-faq-icon {
+  transform: rotate(45deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .vc-stack > *,
+  .vc-step,
+  .vc-step-dot {
+    transition: none;
+  }
+}
+
+/* on the navy fields, focus rings turn white */
+.vc-dark :focus-visible,
+.vc-root td.bg-\[\#0B2545\] :focus-visible {
+  outline-color: #ffffff;
+}
+
+/* ---------- Entrances (see reveal.tsx) ---------- */
+[data-vc-in] {
+  transition:
+    opacity 0.9s cubic-bezier(0.32, 0.72, 0, 1) var(--vc-d, 0ms),
+    transform 1.1s cubic-bezier(0.32, 0.72, 0, 1) var(--vc-d, 0ms);
+}
+[data-vc-in="wait"] {
+  opacity: 0;
+  transform: translate3d(0, 20px, 0);
+}
+img[data-vc-in] {
+  transition:
+    opacity 1s cubic-bezier(0.32, 0.72, 0, 1) var(--vc-d, 0ms),
+    transform 1.8s cubic-bezier(0.32, 0.72, 0, 1) var(--vc-d, 0ms);
+}
+img[data-vc-in="wait"] {
+  transform: scale(1.05);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-vc-in] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none;
+  }
+}
